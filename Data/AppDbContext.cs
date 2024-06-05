@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using WebApiExercisio.Models;
 
 namespace WebApiExercisio.Data
@@ -22,19 +23,29 @@ namespace WebApiExercisio.Data
             modelBuilder.Entity<PessoaModel>()
                 .HasMany(ap => ap.AlteracoesDePeso)
                 .WithOne(p => p.Pessoa)
-                .HasForeignKey(ap => ap.PessoaId);
+                .HasForeignKey(ap => ap.PessoaId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             //Relação entre Pessoa e Exercicio
             modelBuilder.Entity<PessoaModel>()
                 .HasMany(e => e.Exercicios)
                 .WithOne(p => p.Pessoa)
-                .HasForeignKey(e => e.PessoaId);
+                .HasForeignKey(e => e.PessoaId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            //Relação entre Exercicio e TipoExercicio
-            modelBuilder.Entity<ExercicioModel>()
-                .HasOne(te => te.TipoExercicio)
-                .WithMany()
-                .HasForeignKey(e => e.TipoExercicioId);
+            //Relação entre Pessoa e Tipo de Exercício
+            modelBuilder.Entity<PessoaModel>()
+                .HasMany(te => te.TiposDeExercicio)
+                .WithOne(p => p.Pessoa)
+                .HasForeignKey(te => te.PessoaId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            //Relação entre Tipo de Exercício e Exercício
+            modelBuilder.Entity<TipoExercicioModel>()
+                .HasMany(te => te.Exercicios)
+                .WithOne(e => e.TipoExercicio)
+                .HasForeignKey(e => e.TipoExercicioId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

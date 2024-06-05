@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebApiExercisio")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7b503965760f271cd02ff66b6a02bc710f400204")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebApiExercisio")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebApiExercisio")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

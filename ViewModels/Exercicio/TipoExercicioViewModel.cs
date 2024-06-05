@@ -1,8 +1,9 @@
-﻿namespace WebApiExercisio.ViewModels.Exercicio
+﻿using System.ComponentModel.DataAnnotations;
+namespace WebApiExercicio.ViewModels.Exercicio
 {
     public class TipoExercicioViewModel
     {
-        public int Id { get; set; }
+        [Required(ErrorMessage = "O nome é obrigatório")]
         public string Nome { get; set; }
     }
 }

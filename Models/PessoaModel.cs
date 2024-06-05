@@ -11,11 +11,13 @@
 
         public ICollection<AlteracaoDePesoModel> AlteracoesDePeso { get; set; }
         public ICollection<ExercicioModel> Exercicios { get; set; }
+        public ICollection<TipoExercicioModel> TiposDeExercicio { get; set; }
 
         public PessoaModel()
         {
             AlteracoesDePeso = new List<AlteracaoDePesoModel>();
             Exercicios = new List<ExercicioModel>();
+            TiposDeExercicio = new List<TipoExercicioModel>();
         }
     }
 }

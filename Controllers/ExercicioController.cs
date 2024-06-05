@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApiExercicio.Constantes;
 using WebApiExercisio.Data;
 using WebApiExercisio.ViewModels.Exercicio;
 
@@ -21,8 +22,11 @@ namespace WebApiExercisio.Controllers
 
             if (user == null) return Unauthorized();
 
+            try
+            {
+
             var exercicios = await context.Exercicios.Where(e => e.PessoaId == user.Id)
-                .Select(x => new ExercicioPorPessoaViewModel {
+                .Select(x => new ExercicioPorPessoaDto {
                 Id = x.Id,
                 TipoExercicioNome = x.TipoExercicio.Nome,
                 CaloriasPerdidas = x.CaloriasPerdidas,
@@ -36,7 +40,7 @@ namespace WebApiExercisio.Controllers
             var totalKilometragem = exercicios.Sum(e => e.Kilometragem);
             var totalTempo = new TimeSpan(exercicios.Sum(e => e.TempoDeDuracao.Ticks));
 
-            var resultado = new ExercicioTotalViewModel
+            var resultado = new ExercicioTotalViewDto
             {
                 TotalCaloriasPerdidas = totalCalorias,
                 TotalKilometragem = totalKilometragem,
@@ -45,6 +49,16 @@ namespace WebApiExercisio.Controllers
             };
 
             return Ok(resultado);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, MensagensDeErro.ErroAtualizarBanco);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, MensagensDeErro.ErroInesperado);
+            }
+
         }
 
         [HttpGet("v1/GetExerciciosDoMesAtual")]
@@ -58,24 +72,36 @@ namespace WebApiExercisio.Controllers
 
             if (user == null) return Unauthorized();
 
-            var exercicios = await context.Exercicios
-                .Where(e => e.PessoaId == user.Id &&
-                e.DataDeCadastro.Month == DateTime.Now.Month &&
-                e.DataDeCadastro.Year == DateTime.Now.Year
-                )
-                .OrderByDescending(e => e.DataDeCadastro)
-                .Select(x => new ExercicioPorPessoaViewModel
-                {
-                    Id = x.Id,
-                    TipoExercicioNome = x.TipoExercicio.Nome,
-                    CaloriasPerdidas = x.CaloriasPerdidas,
-                    Kilometragem = x.Kilometragem,
-                    TempoDeDuracao = x.TempoDeDuracao,
-                    DataDeCadastro = x.DataDeCadastro,
-                })
-                .ToListAsync();
+            try
+            {
+                var exercicios = await context.Exercicios
+                    .Where(e => e.PessoaId == user.Id &&
+                    e.DataDeCadastro.Month == DateTime.Now.Month &&
+                    e.DataDeCadastro.Year == DateTime.Now.Year
+                    )
+                    .OrderByDescending(e => e.DataDeCadastro)
+                    .Select(x => new ExercicioPorPessoaDto
+                    {
+                        Id = x.Id,
+                        TipoExercicioNome = x.TipoExercicio.Nome,
+                        CaloriasPerdidas = x.CaloriasPerdidas,
+                        Kilometragem = x.Kilometragem,
+                        TempoDeDuracao = x.TempoDeDuracao,
+                        DataDeCadastro = x.DataDeCadastro,
+                    })
+                    .ToListAsync();
 
-            return Ok(exercicios);
+                return Ok(exercicios);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, MensagensDeErro.ErroAtualizarBanco);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, MensagensDeErro.ErroInesperado);
+            }
+
         }
 
         [HttpGet("v1/GetExerciciosDosUltimos3Meses")]
@@ -87,23 +113,34 @@ namespace WebApiExercisio.Controllers
 
             if (user == null) return Unauthorized();
 
-            var ultimos3meses = DateTime.Now.AddMonths(-3);
+            try
+            {
+                var ultimos3meses = DateTime.Now.AddMonths(-3);
 
-            var exercicios = await context.Exercicios
-                .Where(e => e.PessoaId == user.Id && e.DataDeCadastro >= ultimos3meses)
-                .OrderByDescending(e => e.DataDeCadastro)
-                .Select(x => new ExercicioPorPessoaViewModel
-                {
-                    Id = x.Id,
-                    TipoExercicioNome = x.TipoExercicio.Nome,
-                    CaloriasPerdidas = x.CaloriasPerdidas,
-                    Kilometragem = x.Kilometragem,
-                    TempoDeDuracao = x.TempoDeDuracao,
-                    DataDeCadastro = x.DataDeCadastro,
-                })
-                .ToListAsync();
+                var exercicios = await context.Exercicios
+                    .Where(e => e.PessoaId == user.Id && e.DataDeCadastro >= ultimos3meses)
+                    .OrderByDescending(e => e.DataDeCadastro)
+                    .Select(x => new ExercicioPorPessoaDto
+                    {
+                        Id = x.Id,
+                        TipoExercicioNome = x.TipoExercicio.Nome,
+                        CaloriasPerdidas = x.CaloriasPerdidas,
+                        Kilometragem = x.Kilometragem,
+                        TempoDeDuracao = x.TempoDeDuracao,
+                        DataDeCadastro = x.DataDeCadastro,
+                    })
+                    .ToListAsync();
 
-            return Ok(exercicios);
+                return Ok(exercicios);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, MensagensDeErro.ErroAtualizarBanco);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, MensagensDeErro.ErroInesperado);
+            }
         }
 
         [HttpGet("v1/GetExerciciosDosUltimos6Meses")]
@@ -115,23 +152,34 @@ namespace WebApiExercisio.Controllers
 
             if (user == null) return Unauthorized();
 
-            var ultimos3meses = DateTime.Now.AddMonths(-6);
+            try
+            {
+                var ultimos3meses = DateTime.Now.AddMonths(-6);
 
-            var exercicios = await context.Exercicios
-                .Where(e => e.PessoaId == user.Id && e.DataDeCadastro >= ultimos3meses)
-                .OrderByDescending(e => e.DataDeCadastro)
-                .Select(x => new ExercicioPorPessoaViewModel
-                {
-                    Id = x.Id,
-                    TipoExercicioNome = x.TipoExercicio.Nome,
-                    CaloriasPerdidas = x.CaloriasPerdidas,
-                    Kilometragem = x.Kilometragem,
-                    TempoDeDuracao = x.TempoDeDuracao,
-                    DataDeCadastro = x.DataDeCadastro,
-                })
-                .ToListAsync();
+                var exercicios = await context.Exercicios
+                    .Where(e => e.PessoaId == user.Id && e.DataDeCadastro >= ultimos3meses)
+                    .OrderByDescending(e => e.DataDeCadastro)
+                    .Select(x => new ExercicioPorPessoaDto
+                    {
+                        Id = x.Id,
+                        TipoExercicioNome = x.TipoExercicio.Nome,
+                        CaloriasPerdidas = x.CaloriasPerdidas,
+                        Kilometragem = x.Kilometragem,
+                        TempoDeDuracao = x.TempoDeDuracao,
+                        DataDeCadastro = x.DataDeCadastro,
+                    })
+                    .ToListAsync();
 
-            return Ok(exercicios);
+                return Ok(exercicios);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, MensagensDeErro.ErroAtualizarBanco);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, MensagensDeErro.ErroInesperado);
+            }
         }
 
         [HttpGet("v1/GetTipoExercicioExercicios")]
@@ -141,23 +189,34 @@ namespace WebApiExercisio.Controllers
 
             var userName = User.Identity.Name;
 
-            var pessoa = await context.Pessoas
-                .Include(p => p.Exercicios)
-                .ThenInclude(e => e.TipoExercicio)
-                .SingleOrDefaultAsync(p => p.Nome == userName);
-
-            if (pessoa == null)
+            try
             {
-                return NotFound("Pessoa não encontrada.");
+                var pessoa = await context.Pessoas
+            .Include(p => p.Exercicios)
+            .ThenInclude(e => e.TipoExercicio)
+            .SingleOrDefaultAsync(p => p.Nome == userName);
+
+                if (pessoa == null)
+                {
+                    return NotFound("Pessoa não encontrada.");
+                }
+
+                var tipoExercicioPessoa = pessoa.Exercicios.Select(e => new TipoExercicioViewDto
+                {
+                    Id = e.TipoExercicioId,
+                    Nome = e.TipoExercicio.Nome
+                }).Distinct().ToList();
+
+                return Ok(tipoExercicioPessoa);
             }
-
-            var tipoExercicioPessoa = pessoa.Exercicios.Select(e => new TipoExercicioViewModel
+            catch (DbUpdateException)
             {
-                Id = e.TipoExercicioId,
-                Nome = e.TipoExercicio.Nome
-            }).Distinct().ToList();
-
-            return Ok(tipoExercicioPessoa);
+                return StatusCode(500, MensagensDeErro.ErroAtualizarBanco);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, MensagensDeErro.ErroInesperado);
+            }
         }
     }
 }
